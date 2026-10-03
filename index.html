@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تيك شير</title>
+<style>
+:root{box-sizing:border-box;--bg:#0b0b10;--card:#16161f;--fg:#fff;--mut:#9a9ab0;--ac:#fe2c55;--ac2:#25f4ee;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0b10}}
+:root[data-theme="dark"]{--bg:#0b0b10}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+#feed{height:100%;overflow-y:scroll;scroll-snap-type:y mandatory}
+.item{height:100%;scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.item img.pic{max-width:100%;max-height:100%;object-fit:contain}
+.aud{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:radial-gradient(circle at 50% 40%,#3a1030,#0b0b10 70%)}
+.disc{width:min(60vw,260px);height:min(60vw,260px);border-radius:50%;background:conic-gradient(var(--ac),var(--ac2),var(--ac));display:grid;place-items:center;box-shadow:0 0 60px #fe2c5566}
+.disc.spin{animation:s 6s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.disc b{width:34%;height:34%;border-radius:50%;background:var(--bg)}
+.play{background:#fff;color:#000;border:0;border-radius:50px;padding:12px 32px;font-size:18px;font-weight:700}
+.meta{position:absolute;bottom:0;right:0;left:0;padding:70px 16px 24px;background:linear-gradient(transparent,#000c);pointer-events:none}
+.meta h3{margin:0 0 4px;font-size:18px}.meta span{color:var(--mut);font-size:13px}
+.dl{position:absolute;left:14px;bottom:90px;width:54px;height:54px;border-radius:50%;border:0;background:#ffffff26;color:#fff;font-size:24px;backdrop-filter:blur(8px);text-decoration:none;display:grid;place-items:center}
+#add{position:fixed;left:14px;top:calc(14px + env(safe-area-inset-top,0px));z-index:5;background:var(--ac);color:#fff;border:0;border-radius:50px;padding:10px 18px;font-weight:700;font-size:15px}
+#empty{height:100%;display:grid;place-items:center;text-align:center;color:var(--mut);padding:24px}
+#modal,#pm{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;z-index:9}
+#modal.on,#pm.on{display:flex}
+.sheet{background:var(--card);width:100%;border-radius:20px 20px 0 0;padding:20px;display:flex;flex-direction:column;gap:12px}
+.sheet input[type=text]{background:#0b0b10;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;font-size:16px}
+.sheet label{background:#0b0b10;border:2px dashed #444;border-radius:10px;padding:18px;text-align:center;color:var(--mut)}
+.sheet input[type=file]{display:none}
+.row{display:flex;gap:10px}.row button{flex:1;padding:13px;border:0;border-radius:10px;font-size:16px;font-weight:700}
+#go{background:var(--ac);color:#fff}#cx{background:#333;color:#fff}
+#msg{color:var(--mut);font-size:13px;min-height:16px}
+#me{position:fixed;right:14px;top:calc(14px + env(safe-area-inset-top,0px));z-index:5;background:#ffffff26;color:#fff;border:0;border-radius:50px;padding:10px 18px;font-weight:700;font-size:15px;backdrop-filter:blur(8px)}
+.by{color:var(--ac2);font-size:14px;margin-bottom:4px;display:block}
+.mrow{display:flex;align-items:center;gap:10px;background:#0b0b10;border-radius:10px;padding:10px}
+.mrow span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mrow button{background:#fe2c5533;color:#fe2c55;border:0;border-radius:8px;padding:8px 12px;font-weight:700}
+#plist{display:flex;flex-direction:column;gap:8px;max-height:45vh;overflow:auto}
+#cm{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;z-index:10}
+#cm.on{display:flex}
+#cm .sheet{height:82vh}
+#cbody{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px}
+#msgbtn{position:fixed;right:130px;top:calc(14px + env(safe-area-inset-top,0px));z-index:5;background:#ffffff26;color:#fff;border:0;border-radius:50px;padding:10px 16px;font-weight:700;font-size:15px;backdrop-filter:blur(8px)}
+#bdg{background:var(--ac);border-radius:50px;padding:1px 7px;font-size:12px;margin-inline-start:4px}
+.cv{display:flex;flex-direction:column;background:#0b0b10;border-radius:10px;padding:10px;text-align:right;color:#fff;border:0}
+.cv small{color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bub{max-width:78%;padding:9px 13px;border-radius:16px;word-break:break-word}
+.bub.me{align-self:flex-start;background:var(--ac)}.bub.th{align-self:flex-end;background:#2a2a38}
+#cform input{flex:3;background:#0b0b10;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;font-size:16px}
+#cs{background:#0b0b10;border:1px solid #333;color:#fff;border-radius:10px;padding:12px;font-size:16px}
+#ch{display:flex;gap:8px;align-items:center}#ch h3{flex:1;margin:0}
+#ch button{background:#333;color:#fff;border:0;border-radius:8px;padding:8px 12px;font-size:16px}
+</style>
+</head>
+<body>
+<button id="msgbtn" hidden>💬 رسائل<span id="bdg" hidden></span></button>
+<button id="me" hidden>👤 حسابي</button>
+<button id="add" hidden>＋ رفع</button>
+<div id="feed"><div id="empty">جاري التحميل...</div></div>
+<div id="modal"><div class="sheet">
+<h3 style="margin:0">انشر صورة أو أغنية MP3</h3>
+<input type="text" id="t" placeholder="العنوان" maxlength="80">
+<label id="lb">اضغط لاختيار ملف (صورة أو MP3)<input type="file" id="f" accept="image/*,audio/mpeg,.mp3"></label>
+<div id="msg"></div>
+<div class="row"><button id="go">نشر</button><button id="cx">إلغاء</button></div>
+</div></div>
+<div id="pm"><div class="sheet">
+<h3 id="pname" style="margin:0"></h3>
+<div id="pinfo" style="color:var(--mut);font-size:13px"></div>
+<div id="plist"></div>
+<div class="row"><button id="pcx">إغلاق</button></div>
+</div></div>
+<div id="cm"><div class="sheet">
+<div id="ch"><button id="cback" hidden>→</button><h3 id="ctitle">💬 الرسائل</h3><button id="cclose">✕</button></div>
+<input id="cs" type="text" placeholder="ابحث عن شخص بالاسم...">
+<div id="cbody"></div>
+<div class="row" id="cform" hidden><input id="ci" type="text" placeholder="اكتب رسالة..." maxlength="500"><button id="csend" style="background:var(--ac);color:#fff;flex:1">إرسال</button></div>
+</div></div>
+<script>
+window.API_BASE='https://quilt-trips-respondents-precise.trycloudflare.com';
+</script>
+<script>
+(()=>{
+const H={'Content-Type':'application/json'};
+const BASE=(window.API_BASE||'').replace(/\/$/,'');window.U=u=>/^https?:/.test(u)?u:BASE+u;
+const J=async(u,o)=>{o=o||{};const tk=localStorage.getItem('tk');if(tk)o.headers={...(o.headers||{}),Authorization:'Bearer '+tk};const r=await fetch(BASE+u,{...o,credentials:BASE?'omit':'same-origin'});const t=await r.text();if(!r.ok)throw{code:r.status,message:t};return t?JSON.parse(t):null};
+let me=null,ok;const ready=new Promise(r=>ok=r),ticks=new Set();
+const poke=()=>ticks.forEach(f=>f());
+const db={
+ collection(c){return{onSnapshot(cb,err){let last='';const tick=async()=>{try{const d=await J('/api/col/'+c);const s=JSON.stringify(d);if(s!==last){last=s;cb({docs:d.map(x=>({id:x.id,data:()=>x.data}))})}}catch(e){err&&err(e)}};ticks.add(tick);tick();const t=setInterval(tick,3000);return()=>{clearInterval(t);ticks.delete(tick)}}}},
+ doc(p){return{async get(){const d=await J('/api/doc/'+p);return{data:()=>d.data||undefined}},async set(o){await J('/api/doc/'+p,{method:'PUT',headers:H,body:JSON.stringify(o)});poke()}}}
+};
+const assets={upload:f=>J('/api/upload?t='+encodeURIComponent(f.type||'audio/mpeg'),{method:'POST',body:f}),delete:id=>J('/api/file/'+id,{method:'DELETE'})};
+const user={id:async()=>me.id,me:async()=>me,profiles:ids=>J('/api/users?ids='+ids.join(',')),search:q=>J('/api/users?q='+encodeURIComponent(q))};
+window.claude={use:async n=>{await ready;return({db,assets,user})[n]||null}};
+function gate(){
+  const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:99;background:#0b0b10;display:grid;place-items:center;padding:20px';
+  o.innerHTML='<div style="width:100%;max-width:340px;display:flex;flex-direction:column;gap:12px"><h2 style="margin:0;text-align:center">🎵 تيك شير</h2><input id="gn" placeholder="اسم المستخدم" style="padding:13px;border-radius:10px;border:1px solid #333;background:#16161f;color:#fff;font-size:16px"><input id="gp" type="password" placeholder="كلمة السر" style="padding:13px;border-radius:10px;border:1px solid #333;background:#16161f;color:#fff;font-size:16px"><div id="ge" style="color:#fe2c55;font-size:13px;min-height:16px"></div><button id="gl" style="padding:13px;border:0;border-radius:10px;background:#fe2c55;color:#fff;font-size:16px;font-weight:700">دخول</button><button id="gr" style="padding:13px;border:0;border-radius:10px;background:#333;color:#fff;font-size:16px;font-weight:700">إنشاء حساب</button></div>';
+  document.body.appendChild(o);
+  const go=async u=>{try{me=await J(u,{method:'POST',headers:H,body:JSON.stringify({name:o.querySelector('#gn').value,password:o.querySelector('#gp').value})});if(me.token)localStorage.setItem('tk',me.token);o.remove();ok()}catch(e){let m='خطأ';try{m=JSON.parse(e.message).error}catch(x){}o.querySelector('#ge').textContent=m}};
+  o.querySelector('#gl').onclick=()=>go('/api/login');o.querySelector('#gr').onclick=()=>go('/api/register');
+}
+addEventListener('DOMContentLoaded',async()=>{try{me=await J('/api/me');ok()}catch(e){gate()}});
+})();
+</script>
+<script>
+const $=id=>document.getElementById(id);
+let db=null,assets=null,user=null,uid=null,posts=[],names={},current=null,tok=0;
+const feed=$('feed');
+const nm=u=>names[u]||'مستخدم';
+async function resolve(){
+  const ids=[...new Set(posts.map(p=>p.uid).filter(Boolean))].filter(i=>!names[i]);
+  if(ids.length&&user){try{const ps=await user.profiles(ids);ids.forEach(i=>{names[i]=(ps[i]&&ps[i].name)||''})}catch(e){}}
+}
+async function refresh(){const t=++tok;await resolve();if(t===tok)render()}
+function render(){
+  feed.textContent='';
+  if(!posts.length){const e=document.createElement('div');e.id='empty';e.textContent='ما في منشورات بعد، كن أول من ينشر!';feed.appendChild(e);return}
+  posts.forEach(p=>{
+    const it=document.createElement('div');it.className='item';
+    if(p.type==='image'){const im=document.createElement('img');im.className='pic';im.src=U(p.url);im.loading='lazy';it.appendChild(im)}
+    else{
+      const a=document.createElement('div');a.className='aud';
+      const d=document.createElement('div');d.className='disc';d.appendChild(document.createElement('b'));
+      const b=document.createElement('button');b.className='play';b.textContent='▶ تشغيل';
+      const au=new Audio();au.preload='none';au.src=U(p.url);au.loop=true;
+      b.onclick=()=>{if(au.paused){if(current&&current!==au)current.pause();au.play().catch(()=>{});current=au}else au.pause()};
+      au.onplay=()=>{d.classList.add('spin');b.textContent='⏸ إيقاف'};
+      au.onpause=()=>{d.classList.remove('spin');b.textContent='▶ تشغيل'};
+      a.append(d,b);it.appendChild(a);
+    }
+    const m=document.createElement('div');m.className='meta';
+    const by=document.createElement('span');by.className='by';by.textContent='@'+nm(p.uid);if(uid&&p.uid&&p.uid!==uid){by.style.pointerEvents='auto';by.style.cursor='pointer';by.textContent+=' 💬';by.onclick=()=>openChat(p.uid)}
+    const h=document.createElement('h3');h.textContent=p.title||'بدون عنوان';
+    const s=document.createElement('span');s.textContent=p.type==='image'?'صورة':'أغنية MP3';
+    m.append(by,h,s);it.appendChild(m);
+    const dl=document.createElement('a');dl.className='dl';dl.textContent='⬇';dl.href=U(p.url);dl.onclick=async e=>{e.preventDefault();try{const r=await fetch(dl.href),b=await r.blob(),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=dl.download;a.click()}catch(x){window.open(dl.href)}};
+    dl.download=(p.title||'file')+(p.type==='image'?'':'.mp3');dl.title='تنزيل';
+    it.appendChild(dl);feed.appendChild(it);
+  });
+}
+const myRef=()=>db.doc('posts/'+uid);
+async function myItems(){const s=await myRef().get();const d=s&&s.data&&s.data();return((d&&d.items)||[]).map(x=>({...x}))}
+$('add').onclick=()=>$('modal').classList.add('on');
+$('cx').onclick=()=>{$('modal').classList.remove('on');$('msg').textContent=''};
+$('f').onchange=e=>{const f=e.target.files[0];$('lb').firstChild.textContent=f?f.name:'اضغط لاختيار ملف'};
+$('go').onclick=async()=>{
+  const f=$('f').files[0],msg=$('msg');
+  if(!f){msg.textContent='اختر ملفاً أولاً';return}
+  const isImg=f.type.startsWith('image/'),isMp3=f.type==='audio/mpeg'||/\.mp3$/i.test(f.name);
+  if(!isImg&&!isMp3){msg.textContent='الملف لازم يكون صورة أو MP3';return}
+  $('go').disabled=true;msg.textContent='جاري الرفع...';
+  try{
+    const r=await assets.upload(f);
+    const items=await myItems();
+    items.push({id:Date.now().toString(36),uid,title:$('t').value.trim()||f.name.replace(/\.[^.]+$/,''),type:isImg?'image':'audio',url:r.url,aid:r.id,ts:Date.now()});
+    await myRef().set({items});
+    $('t').value='';$('f').value='';$('lb').firstChild.textContent='اضغط لاختيار ملف';
+    $('modal').classList.remove('on');msg.textContent='';
+  }catch(e){msg.textContent='فشل الرفع: '+(e&&e.message||e.code||'خطأ')}
+  $('go').disabled=false;
+};
+async function openProfile(){
+  $('pname').textContent='👤 '+(names[uid]||'حسابي');
+  const mine=posts.filter(p=>p.uid===uid);
+  $('pinfo').textContent='منشوراتك: '+mine.length;
+  const l=$('plist');l.textContent='';
+  mine.forEach(p=>{
+    const r=document.createElement('div');r.className='mrow';
+    const t=document.createElement('span');t.textContent=(p.type==='image'?'🖼 ':'🎵 ')+p.title;
+    const x=document.createElement('button');x.textContent='حذف';
+    x.onclick=async()=>{
+      if(!confirm('حذف هذا المنشور؟'))return;
+      try{const items=(await myItems()).filter(i=>i.id!==p.id);await myRef().set({items});
+        if(assets&&p.aid){assets.delete(p.aid).catch(()=>{})}
+        r.remove();$('pinfo').textContent='منشوراتك: '+items.length}catch(e){alert('تعذر الحذف')}
+    };
+    r.append(t,x);l.appendChild(r);
+  });
+  $('pm').classList.add('on');
+}
+$('me').onclick=openProfile;
+$('pcx').onclick=()=>$('pm').classList.remove('on');
+
+let msgs=[],peer=null;
+const seenGet=()=>{try{return JSON.parse(localStorage.getItem('seen')||'{}')}catch(e){return{}}};
+const seenSet=(k,v)=>{try{const o=seenGet();o[k]=v;localStorage.setItem('seen',JSON.stringify(o))}catch(e){}};
+function convs(){
+  const m={};
+  msgs.filter(x=>x.from===uid||x.to===uid).forEach(x=>{const p=x.from===uid?x.to:x.from;if(!m[p]||m[p].ts<x.ts)m[p]=x});
+  return Object.entries(m).sort((a,b)=>b[1].ts-a[1].ts);
+}
+function badge(){
+  const sn=seenGet();const n=convs().filter(([p,l])=>l.from!==uid&&l.ts>(sn[p]||0)).length;
+  $('bdg').hidden=!n;$('bdg').textContent=n;
+}
+async function nameIds(ids){
+  ids=ids.filter(i=>i&&!names[i]);
+  if(ids.length&&user){try{const ps=await user.profiles(ids);ids.forEach(i=>{names[i]=(ps[i]&&ps[i].name)||''})}catch(e){}}
+}
+function personRow(id,sub){
+  const b=document.createElement('button');b.className='cv';
+  const t=document.createElement('b');t.textContent=nm(id);b.appendChild(t);
+  if(sub){const s=document.createElement('small');s.textContent=sub;b.appendChild(s)}
+  b.onclick=()=>openChat(id);return b;
+}
+function renderChat(){
+  badge();
+  if(!$('cm').classList.contains('on'))return;
+  const body=$('cbody');body.textContent='';
+  $('cback').hidden=!peer;$('cform').hidden=!peer;$('cs').hidden=!!peer;
+  if(peer){
+    $('ctitle').textContent=nm(peer);
+    msgs.filter(x=>(x.from===uid&&x.to===peer)||(x.from===peer&&x.to===uid)).sort((a,b)=>a.ts-b.ts).forEach(x=>{
+      const d=document.createElement('div');d.className='bub '+(x.from===uid?'me':'th');d.textContent=x.text;body.appendChild(d)});
+    body.scrollTop=body.scrollHeight;
+    const last=msgs.filter(x=>x.from===peer).reduce((a,x)=>Math.max(a,x.ts),0);if(last){seenSet(peer,last);badge()}
+  }else{
+    $('ctitle').textContent='💬 الرسائل';
+    const cs=convs();
+    if(!cs.length){const e=document.createElement('div');e.style.cssText='color:var(--mut);text-align:center;padding:24px';e.textContent='ما في محادثات. ابحث عن شخص أو اضغط على اسمه بالمنشورات.';body.appendChild(e)}
+    cs.forEach(([p,l])=>body.appendChild(personRow(p,(l.from===uid?'أنت: ':'')+l.text)));
+  }
+}
+async function openChat(p){
+  peer=p||null;$('cm').classList.add('on');$('cs').value='';
+  if(p)await nameIds([p]);
+  renderChat();
+}
+$('msgbtn').onclick=()=>openChat(null);
+$('cclose').onclick=()=>{peer=null;$('cm').classList.remove('on')};
+$('cback').onclick=()=>{peer=null;renderChat()};
+$('cs').oninput=async e=>{
+  const q=e.target.value.trim();
+  if(!q||!user){renderChat();return}
+  let hits=[];try{hits=await user.search(q)}catch(x){}
+  if($('cs').value.trim()!==q)return;
+  const body=$('cbody');body.textContent='';
+  hits.filter(h=>h.id&&h.id!==uid).forEach(h=>{names[h.id]=h.name;body.appendChild(personRow(h.id))});
+  if(!body.children.length){const d=document.createElement('div');d.style.cssText='color:var(--mut);text-align:center;padding:24px';d.textContent='لا نتائج';body.appendChild(d)}
+};
+async function send(){
+  const t=$('ci').value.trim();if(!t||!peer)return;
+  $('csend').disabled=true;
+  try{
+    const s=await db.doc('msgs/'+uid).get();const d=s&&s.data&&s.data();
+    const items=((d&&d.items)||[]).map(x=>({...x}));items.push({to:peer,text:t,ts:Date.now()});
+    await db.doc('msgs/'+uid).set({items:items.slice(-300)});
+    $('ci').value='';
+  }catch(e){alert('تعذر الإرسال')}
+  $('csend').disabled=false;
+}
+$('csend').onclick=send;
+$('ci').onkeydown=e=>{if(e.key==='Enter')send()};
+(async()=>{
+  try{
+    db=await claude.use('db');assets=await claude.use('assets');user=await claude.use('user');
+    if(user){uid=await user.id();try{const me=await user.me();if(me&&me.name)names[uid]=me.name}catch(e){}}
+    if(db&&uid){$('me').hidden=false;$('msgbtn').hidden=false;if(assets)$('add').hidden=false}
+    if(db)db.collection('posts').onSnapshot(s=>{
+      posts=s.docs.flatMap(d=>((d.data()||{}).items)||[]).sort((a,b)=>b.ts-a.ts);refresh()
+    },()=>render());
+    if(db&&uid)db.collection('msgs').onSnapshot(async sn=>{
+      msgs=sn.docs.flatMap(d=>(((d.data()||{}).items)||[]).map(x=>({...x,from:d.id})));
+      await nameIds([...new Set(msgs.flatMap(x=>[x.from,x.to]))]);renderChat()},()=>{});
+    else render();
+  }catch(e){render()}
+})();
+</script>
+</body>
+</html>
